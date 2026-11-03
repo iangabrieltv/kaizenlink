@@ -20,7 +20,9 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     setLoading(true);
 
     try {
-      const res = await api.login(email.trim(), password);
+      const cleanEmail = email.trim().toLowerCase();
+      const cleanPass = password.trim();
+      const res = await api.login(cleanEmail, cleanPass);
       onLoginSuccess(res.user);
     } catch (err: any) {
       setError(err.message || 'Falha ao autenticar.');
@@ -29,9 +31,17 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     }
   };
 
-  const autofillCredentials = () => {
-    setEmail('iangabrieltv@gmail.com');
-    setPassword('ianeiuri');
+  const handleInstantLogin = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await api.login('iangabrieltv@gmail.com', 'ianeiuri');
+      onLoginSuccess(res.user);
+    } catch (err: any) {
+      setError(err.message || 'Falha ao autenticar.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -111,15 +121,16 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               </div>
             </div>
 
-            {/* Autofill quick helper for reviewer */}
+            {/* Instant login button */}
             <div className="pt-1">
               <button
                 type="button"
-                onClick={autofillCredentials}
-                className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded bg-[#202227] hover:bg-[#292C31] border border-[#292C31] text-[11px] text-[#C5A46D] cursor-pointer transition-colors"
+                onClick={handleInstantLogin}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#202227] hover:bg-[#292C31] border border-[#C5A46D]/40 text-xs text-[#C5A46D] font-medium cursor-pointer transition-colors"
               >
-                <Sparkles className="w-3 h-3" />
-                <span>Usar credenciais padrão (Ian Gabriel)</span>
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Entrar com 1 Clique (Ian Gabriel &bull; Kaizen Visual)</span>
               </button>
             </div>
 

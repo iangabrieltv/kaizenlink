@@ -33,10 +33,15 @@ async function startServer() {
 
   // 1. Auth: Login
   app.post('/api/auth/login', (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
+    const rawEmail = req.body?.email;
+    const rawPassword = req.body?.password;
+
+    if (!rawEmail || !rawPassword) {
       return res.status(400).json({ error: 'E-mail e senha são obrigatórios.' });
     }
+
+    const email = String(rawEmail).trim().toLowerCase();
+    const password = String(rawPassword).trim();
 
     const user = db.getUserByEmail(email);
     if (!user) {

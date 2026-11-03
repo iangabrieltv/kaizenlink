@@ -34,6 +34,14 @@ const defaultData: DatabaseSchema = {
       role: 'Administrador Kaizen Visual',
       avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     },
+    {
+      id: 'usr_scales_kaizen',
+      name: 'Equipe Kaizen Visual',
+      email: 'scalesvisual@gmail.com',
+      passwordHash: hashPassword('ianeiuri'),
+      role: 'Administrador Kaizen Visual',
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    },
   ],
   clients: [
     {
@@ -232,7 +240,15 @@ class LocalDatabase {
       }
       if (fs.existsSync(DB_PATH)) {
         const raw = fs.readFileSync(DB_PATH, 'utf-8');
-        return JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        // Ensure default admin accounts exist
+        const existingEmails = new Set(parsed.users.map((u: any) => u.email.toLowerCase()));
+        for (const defUser of defaultData.users) {
+          if (!existingEmails.has(defUser.email.toLowerCase())) {
+            parsed.users.push(defUser);
+          }
+        }
+        return parsed;
       }
     } catch (e) {
       console.warn('Could not read existing database, falling back to seed data:', e);
@@ -264,7 +280,9 @@ class LocalDatabase {
 
   // Auth
   public getUserByEmail(email: string) {
-    return this.data.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    if (!email) return undefined;
+    const clean = email.trim().toLowerCase();
+    return this.data.users.find((u) => u.email.trim().toLowerCase() === clean);
   }
 
   public getUserById(id: string) {
