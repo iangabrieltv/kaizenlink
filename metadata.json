@@ -1,0 +1,6 @@
+{
+  "name": "KAIZEN - Gestão e Analytics de Links",
+  "description": "Plataforma profissional de encurtamento, gestão e inteligência de links da Kaizen Visual com suporte a domínio personalizado kaizen.visual.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
